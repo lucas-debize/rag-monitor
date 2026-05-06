@@ -13,18 +13,36 @@ services:
       retries: 10
       start_period: 30s
 
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: >
+      sh -c "ollama pull mistral && echo 'Mistral prêt'"
+    restart: "no"
+
   app:
     build: .
     container_name: rag-monitor-app
     depends_on:
       ollama:
         condition: service_healthy
+      ollama-init:
+        condition: service_completed_successfully
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
       - MODEL_NAME=mistral
+      - HF_HOME=/app/.cache/huggingface
     volumes:
       - ./src:/app/src
       - ./data:/app/data
+      - hf_cache:/app/.cache/huggingface
+    command: sh -c "python src/ingestion.py && python src/rag_pipeline.py"
 
 volumes:
   ollama_data:
+  hf_cache:

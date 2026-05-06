@@ -1,6 +1,14 @@
+requests>=2.32.0
+urllib3<2.3.0
+charset-normalizer<3.5.0
 langchain==0.3.26
 langchain-community==0.3.27
 langchain-huggingface==0.2.0
-chromadb==1.0.10
+langchain-chroma==0.2.0
+langchain-ollama==0.2.2
+chromadb>=0.4.0,<0.6.0
 sentence-transformers==4.1.0
 ollama==0.5.1
+pypdf==5.1.0
+unstructured[md]==0.16.11
+markdown==3.7
