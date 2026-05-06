@@ -12,3 +12,4 @@ ollama==0.5.1
 pypdf==5.1.0
 unstructured[md]==0.16.11
 markdown==3.7
+mlflow==2.18.0

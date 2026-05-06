@@ -1,0 +1,15 @@
+artifact_uri: file:///mlflow/mlartifacts/628234446217724663/ce9af188d6d24d3690ebc151cfa96688/artifacts
+end_time: 1778070368165
+entry_point_name: ''
+experiment_id: '628234446217724663'
+lifecycle_stage: active
+run_id: ce9af188d6d24d3690ebc151cfa96688
+run_name: rag-v3
+run_uuid: ce9af188d6d24d3690ebc151cfa96688
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778069962834
+status: 3
+tags: []
+user_id: root

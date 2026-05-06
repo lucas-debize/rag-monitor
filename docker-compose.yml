@@ -25,6 +25,28 @@ services:
       sh -c "ollama pull mistral && echo 'Mistral prêt'"
     restart: "no"
 
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.18.0
+    container_name: mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+      - ./mlartifacts:/mlflow/mlartifacts
+    working_dir: /mlflow
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri file:///mlflow/mlruns
+      --default-artifact-root file:///mlflow/mlartifacts
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
   app:
     build: .
     container_name: rag-monitor-app
@@ -33,15 +55,20 @@ services:
         condition: service_healthy
       ollama-init:
         condition: service_completed_successfully
+      mlflow:
+        condition: service_healthy
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
       - MODEL_NAME=mistral
       - HF_HOME=/app/.cache/huggingface
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_EXPERIMENT_NAME=rag-monitor
+      - PROMPT_VERSION=v2
     volumes:
       - ./src:/app/src
       - ./data:/app/data
       - hf_cache:/app/.cache/huggingface
-    command: sh -c "python src/ingestion.py && python src/rag_pipeline.py"
+    command: sh -c "python -m src.ingestion && python -m src.compare_prompts"
 
 volumes:
   ollama_data:
