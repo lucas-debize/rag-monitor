@@ -1,0 +1,17 @@
+{
+  "v1": {
+    "faithfulness": NaN,
+    "answer_relevancy": NaN,
+    "context_precision": NaN
+  },
+  "v2": {
+    "faithfulness": NaN,
+    "answer_relevancy": NaN,
+    "context_precision": NaN
+  },
+  "v3": {
+    "faithfulness": NaN,
+    "answer_relevancy": NaN,
+    "context_precision": NaN
+  }
+}

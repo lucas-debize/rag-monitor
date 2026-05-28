@@ -1,0 +1,77 @@
+[
+  {
+    "question": "Quel est le sujet du sprint 6 ?",
+    "ground_truth": "Le sprint 6 porte sur le debug et l'amélioration d'un projet Unreal Engine cassé fourni par le client.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "De quoi parle ce document ?",
+    "ground_truth": "Ce document est le sujet du Sprint 6 d'Unreal Engine à Epitech Berlin 2025/2026, consacré au debug et à l'amélioration d'un projet Unreal cassé.",
+    "category": "summary"
+  },
+  {
+    "question": "Quelle est la deadline de rendu du sprint 6 ?",
+    "ground_truth": "La deadline finale est le mardi 26 mai à 23h59.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Que se passe-t-il si on rend le projet en retard ?",
+    "ground_truth": "Si la deadline est manquée, le client considère que le projet a été abandonné, ce qui entraîne automatiquement la note de 0, sans excuse ni extension possible.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "À qui faut-il envoyer le rendu ?",
+    "ground_truth": "Le rendu doit être envoyé par email à t.nanassy@pm.me.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Sous quel format faut-il livrer le projet ?",
+    "ground_truth": "Il faut livrer un build zippé téléchargeable via un service comme SwissTransfer ou Google Drive, et fournir un dépôt GitHub complet du projet.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Qui faut-il ajouter comme collaborateur sur le dépôt GitHub ?",
+    "ground_truth": "Il faut ajouter theo.denanassy@epitech.eu comme collaborateur sur le dépôt GitHub.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Quels sont les bugs principaux à corriger dans le projet ?",
+    "ground_truth": "Les bugs à corriger sont : le projet ne s'ouvre pas, rien ne spawn quand on appuie sur Play, les cristaux ont des contours blancs étranges, les sons des cristaux ne fonctionnent pas, l'interaction ne fonctionne pas, le puzzle est cassé, et l'optimisation est mauvaise (10-20 FPS dans une scène vide).",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Que faut-il faire après avoir corrigé les bugs ?",
+    "ground_truth": "Une fois le jeu fonctionnel, il faut ajouter sa propre touche personnelle : une nouvelle mécanique, une fonctionnalité fun ou quelque chose de cool, avec un feedback visuel ou audio approprié.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Quelles sont les causes de pénalités ?",
+    "ground_truth": "Les pénalités sont dues aux crashs, soft locks et à une optimisation horrible.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Qui est l'auteur ou le responsable de ce sujet ?",
+    "ground_truth": "Théo de Nanassy est le responsable du sujet.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Combien de FPS sont jugés inacceptables dans une scène vide ?",
+    "ground_truth": "10 à 20 FPS dans une scène vide est jugé inacceptable.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Que risque-t-on si on ne sait pas expliquer son propre code ?",
+    "ground_truth": "Si on ne peut pas expliquer son propre code, le client peut soupçonner un travail externalisé et donner une mauvaise note (0/5 par dépit).",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Quelle est la capitale de l'Australie ?",
+    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
+    "category": "out_of_scope"
+  },
+  {
+    "question": "Quel est le prix du Bitcoin aujourd'hui ?",
+    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
+    "category": "out_of_scope"
+  }
+]

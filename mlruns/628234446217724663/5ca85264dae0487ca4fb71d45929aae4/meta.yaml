@@ -1,0 +1,15 @@
+artifact_uri: file:///mlflow/mlartifacts/628234446217724663/5ca85264dae0487ca4fb71d45929aae4/artifacts
+end_time: 1778079210501
+entry_point_name: ''
+experiment_id: '628234446217724663'
+lifecycle_stage: active
+run_id: 5ca85264dae0487ca4fb71d45929aae4
+run_name: eval-v2
+run_uuid: 5ca85264dae0487ca4fb71d45929aae4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1778079210476
+status: 3
+tags: []
+user_id: root
