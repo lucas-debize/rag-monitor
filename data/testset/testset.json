@@ -1,13 +1,13 @@
 [
   {
-    "question": "Quel est le sujet du sprint 6 ?",
-    "ground_truth": "Le sprint 6 porte sur le debug et l'amélioration d'un projet Unreal Engine cassé fourni par le client.",
+    "question": "Quels sont les ingrédients principaux de la recette de cookies ?",
+    "ground_truth": "Les ingrédients principaux sont le beurre, le sucre, le sucre vanillé, la farine, les œufs et les pépites de chocolat.",
     "category": "factual_in_doc"
   },
   {
-    "question": "De quoi parle ce document ?",
-    "ground_truth": "Ce document est le sujet du Sprint 6 d'Unreal Engine à Epitech Berlin 2025/2026, consacré au debug et à l'amélioration d'un projet Unreal cassé.",
-    "category": "summary"
+    "question": "Qui est l'auteur du sujet du sprint 6 ?",
+    "ground_truth": "L'auteur du sujet du sprint 6 est Théo de Nanassy.",
+    "category": "factual_in_doc"
   },
   {
     "question": "Quelle est la deadline de rendu du sprint 6 ?",
@@ -15,13 +15,23 @@
     "category": "factual_in_doc"
   },
   {
-    "question": "Que se passe-t-il si on rend le projet en retard ?",
-    "ground_truth": "Si la deadline est manquée, le client considère que le projet a été abandonné, ce qui entraîne automatiquement la note de 0, sans excuse ni extension possible.",
-    "category": "factual_in_doc"
+    "question": "Combien de crédits ECTS rapporte ce sprint ?",
+    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
+    "category": "out_of_scope"
+  },
+  {
+    "question": "Quelle est la capitale de l'Australie ?",
+    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
+    "category": "out_of_scope"
   },
   {
     "question": "À qui faut-il envoyer le rendu ?",
     "ground_truth": "Le rendu doit être envoyé par email à t.nanassy@pm.me.",
+    "category": "factual_in_doc"
+  },
+  {
+    "question": "Quel est le sujet du sprint 6 ?",
+    "ground_truth": "Le sprint 6 porte sur le debug et l'amélioration d'un projet Unreal Engine cassé fourni par le client.",
     "category": "factual_in_doc"
   },
   {
@@ -65,13 +75,13 @@
     "category": "factual_in_doc"
   },
   {
-    "question": "Quelle est la capitale de l'Australie ?",
+    "question": "Quel est le prix du Bitcoin aujourd'hui ?",
     "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
     "category": "out_of_scope"
   },
   {
-    "question": "Quel est le prix du Bitcoin aujourd'hui ?",
-    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
-    "category": "out_of_scope"
+    "question": "Que se passe-t-il si on rend le projet en retard ?",
+    "ground_truth": "Si la deadline est manquée, le client considère que le projet a été abandonné, ce qui entraîne automatiquement la note de 0, sans excuse ni extension possible.",
+    "category": "factual_in_doc"
   }
 ]

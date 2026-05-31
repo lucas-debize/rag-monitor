@@ -22,7 +22,7 @@ services:
     environment:
       - OLLAMA_HOST=http://ollama:11434
     entrypoint: >
-      sh -c "ollama pull mistral && echo 'Mistral prêt'"
+      sh -c "ollama pull mistral && ollama pull qwen2.5:1.5b && echo 'Modèles prêts'"
     restart: "no"
 
   mlflow:
@@ -61,6 +61,7 @@ services:
       - PYTHONPATH=/app
       - OLLAMA_BASE_URL=http://ollama:11434
       - MODEL_NAME=mistral
+      - JUDGE_MODEL=qwen2.5:1.5b
       - HF_HOME=/app/.cache/huggingface
       - MLFLOW_TRACKING_URI=http://mlflow:5000
       - MLFLOW_EXPERIMENT_NAME=rag-monitor
@@ -70,7 +71,7 @@ services:
       - ./src:/app/src
       - ./data:/app/data
       - hf_cache:/app/.cache/huggingface
-    command: sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v1 v2 v3"
+    command: sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v1 v2 v3 --max-samples 5"
 
   streamlit:
     build: .

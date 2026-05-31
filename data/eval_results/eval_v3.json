@@ -1,5 +1,5 @@
 {
-  "faithfulness": NaN,
-  "answer_relevancy": NaN,
-  "context_precision": NaN
+  "faithfulness": 0.4,
+  "answer_relevancy": 0.1647604862869973,
+  "context_precision": 0.4666666666466666
 }

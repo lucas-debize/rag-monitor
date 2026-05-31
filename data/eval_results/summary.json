@@ -1,17 +1,17 @@
 {
   "v1": {
-    "faithfulness": NaN,
-    "answer_relevancy": NaN,
-    "context_precision": NaN
+    "faithfulness": 0.5333333333333333,
+    "answer_relevancy": 0.4697307470840368,
+    "context_precision": 0.4666666666466666
   },
   "v2": {
-    "faithfulness": NaN,
-    "answer_relevancy": NaN,
-    "context_precision": NaN
+    "faithfulness": 0.2,
+    "answer_relevancy": 0.164494654318903,
+    "context_precision": 0.4666666666466666
   },
   "v3": {
-    "faithfulness": NaN,
-    "answer_relevancy": NaN,
-    "context_precision": NaN
+    "faithfulness": 0.4,
+    "answer_relevancy": 0.1647604862869973,
+    "context_precision": 0.4666666666466666
   }
 }

@@ -75,9 +75,14 @@ def main():
     parser.add_argument("--versions", nargs="+", default=["v1", "v2", "v3"])
     parser.add_argument("--check-threshold", action="store_true",
                         help="Échoue si faithfulness < seuil (pour CI/CD)")
+    parser.add_argument("--max-samples", type=int, default=None,
+                        help="Limite le nombre de questions évaluées")
     args = parser.parse_args()
 
     testset = load_testset(TESTSET_PATH)
+    if args.max_samples:
+        testset = testset[:args.max_samples]
+        print(f"Test set limité à {len(testset)} questions")
 
     summary = {}
     for v in args.versions:

@@ -48,7 +48,7 @@ def build_evaluation_dataset(samples):
 def run_ragas(samples):
     dataset = build_evaluation_dataset(samples)
     judge_llm, judge_emb = build_judge()
-    run_config = RunConfig(timeout=300, max_workers=2, max_retries=3)
+    run_config = RunConfig(timeout=1800, max_workers=1, max_retries=3)
 
     print(f"Évaluation RAGAS sur {len(samples)} échantillons (juge : {JUDGE_MODEL} via OpenAI-compat)...")
     result = evaluate(
