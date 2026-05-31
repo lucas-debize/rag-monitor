@@ -1,0 +1,12 @@
+timestamp,prompt_version,question,answer,latency_s,answer_length,num_sources,sources
+2026-05-31T14:53:10.564127,v3,combien ?," Réponse: Je ne sais pas, l'information n'est pas dans les documents fournis.
+Sources: Recette-cookie.pdf",57.7086,105,3,Recette-cookie.pdf#p1|Recette-cookie.pdf#p1|Recette-cookie.pdf#p1
+2026-05-31T14:55:08.719883,v3,quel aliment ? ," Réponse : Les pépites de chocolat
+Sources : Recette-cookie.pdf, page 2",110.9291,71,3,Recette-cookie.pdf#p2|Recette-cookie.pdf#p2|Recette-cookie.pdf#p2
+2026-05-31T14:57:21.412118,v3,Quel est la capital de l'Australie ?," Je ne sais pas, l'information n'est pas dans les documents fournis.
+Sources: Recette-cookie.pdf (page 1)",125.7348,105,3,Recette-cookie.pdf#p1|Recette-cookie.pdf#p1|Recette-cookie.pdf#p1
+2026-05-31T15:00:03.184765,v3,combien de temps pour cuire les cookie ?," Réponse: 10 minutes
+Sources: Recette-cookie.pdf, page 3 (x3)",141.25,61,3,Recette-cookie.pdf#p3|Recette-cookie.pdf#p3|Recette-cookie.pdf#p3
+2026-05-31T15:03:42.682605,v1,combien ?," La recette ne donne pas de quantité pour le beurre, le sucre ou le sucre vanillé, ni pour les œufs. Il est donc impossible de dire combien il y a de chaque ingrédient à partir de cette recette.",77.6745,194,3,Recette-cookie.pdf#p1|Recette-cookie.pdf#p1|Recette-cookie.pdf#p1
+2026-05-31T15:04:28.356253,v1,quel aliment ?," Les cookies, selon le contexte fourni, car chaque instruction est issue d'une recette de cookies.",35.82,98,3,Recette-cookie.pdf#p2|Recette-cookie.pdf#p2|Recette-cookie.pdf#p2
+2026-05-31T15:05:22.495980,v1,Quel est la capital de l'Australie ?, La recette de cookies ne fournit pas d'information sur la capitale de l'Australie.,45.753,83,3,Recette-cookie.pdf#p1|Recette-cookie.pdf#p1|Recette-cookie.pdf#p1

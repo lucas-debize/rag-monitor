@@ -6,6 +6,7 @@ import streamlit as st
 import plotly.express as px
 import mlflow
 from mlflow.tracking import MlflowClient
+from src.metrics_logger import log_query, load_metrics
 
 from src.rag_pipeline import build_chain, extract_sources
 from src.prompts import list_versions, get_prompt
@@ -95,6 +96,13 @@ def page_chat():
                 answer = chain.invoke(question)
                 latency = time.perf_counter() - t0
                 sources = extract_sources(docs)
+            log_query(
+                question=question,
+                answer=answer,
+                latency_s=latency,
+                sources=sources,
+                prompt_version=prompt_version,
+            )
             st.markdown(answer)
             with st.expander(f"📚 Sources ({len(sources)}) — {latency:.2f}s"):
                 for i, doc in enumerate(docs):
@@ -140,50 +148,77 @@ def fetch_runs():
 
 
 def page_dashboard():
-    st.title("📊 Dashboard — Monitoring & MLflow")
+    st.title("📊 Dashboard Monitoring")
 
-    col1, col2 = st.columns([1, 4])
-    with col1:
-        if st.button("🔄 Rafraîchir"):
-            st.cache_data.clear()
+    df = load_metrics()
 
-    df = fetch_runs()
     if df.empty:
-        st.warning("Aucun run MLflow trouvé. Lance une requête dans le Chat ou exécute une évaluation.")
+        st.info("Aucune requête enregistrée pour le moment. Pose des questions dans l'onglet Chat.")
         return
 
-    st.subheader("Vue d'ensemble")
-    last = df.iloc[0]
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Runs total", len(df))
-    m2.metric("Latence moy. (dernier run)", f"{last['avg_latency_s']:.2f}s" if pd.notna(last["avg_latency_s"]) else "—")
-    m3.metric("Faithfulness (dernier)", f"{last['faithfulness']:.3f}" if pd.notna(last["faithfulness"]) else "—")
-    m4.metric("Relevancy (dernier)", f"{last['answer_relevancy']:.3f}" if pd.notna(last["answer_relevancy"]) else "—")
+    with st.sidebar:
+        st.header("Filtres")
+        versions = ["(toutes)"] + sorted(df["prompt_version"].dropna().unique().tolist())
+        selected_version = st.selectbox("Version du prompt", versions, index=0)
+        last_n = st.slider("Dernières N requêtes", 10, 500, 50, step=10)
 
-    threshold = float(os.getenv("FAITHFULNESS_THRESHOLD", "0.75"))
-    if pd.notna(last["faithfulness"]) and last["faithfulness"] < threshold:
-        st.error(f"⚠️ ALERTE : faithfulness ({last['faithfulness']:.3f}) sous le seuil ({threshold})")
-    elif pd.notna(last["faithfulness"]):
-        st.success(f"✅ Faithfulness OK ({last['faithfulness']:.3f} ≥ {threshold})")
+    if selected_version != "(toutes)":
+        df = df[df["prompt_version"] == selected_version]
+    df = df.sort_values("timestamp").tail(last_n)
 
-    st.subheader("Comparaison par version de prompt")
-    eval_df = df.dropna(subset=["faithfulness"])
-    if not eval_df.empty:
-        agg = eval_df.groupby("prompt_version")[["faithfulness", "answer_relevancy", "context_precision"]].mean().reset_index()
-        melted = agg.melt(id_vars="prompt_version", var_name="metric", value_name="score")
-        fig = px.bar(melted, x="prompt_version", y="score", color="metric", barmode="group", range_y=[0, 1])
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.info("Aucune métrique RAGAS disponible. Lance `run_evaluation.py`.")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Requêtes", len(df))
+    c2.metric("Latence moy. (s)", f"{df['latency_s'].mean():.2f}")
+    c3.metric("Longueur moy.", f"{df['answer_length'].mean():.0f}")
+    c4.metric("Sources moy.", f"{df['num_sources'].mean():.2f}")
 
-    st.subheader("Évolution des latences")
-    lat_df = df.dropna(subset=["avg_latency_s"]).sort_values("start_time")
-    if not lat_df.empty:
-        fig2 = px.line(lat_df, x="start_time", y="avg_latency_s", color="prompt_version", markers=True)
-        st.plotly_chart(fig2, use_container_width=True)
+    st.subheader("Latence dans le temps")
+    fig1 = px.line(df, x="timestamp", y="latency_s", color="prompt_version", markers=True)
+    st.plotly_chart(fig1, use_container_width=True)
 
-    st.subheader("Tous les runs")
-    st.dataframe(df, use_container_width=True)
+    st.subheader("Distribution de la longueur des réponses")
+    fig2 = px.histogram(df, x="answer_length", nbins=20, color="prompt_version")
+    st.plotly_chart(fig2, use_container_width=True)
+
+    st.subheader("Nombre de sources par requête")
+    fig3 = px.histogram(df, x="num_sources", nbins=10, color="prompt_version")
+    st.plotly_chart(fig3, use_container_width=True)
+
+    st.subheader("Dernière évaluation RAGAS (MLflow)")
+    try:
+        mlflow.set_tracking_uri(MLFLOW_URI)
+        client = MlflowClient()
+        exp = client.get_experiment_by_name(EXPERIMENT_NAME)
+        if exp is None:
+            st.warning(f"Expérience MLflow '{EXPERIMENT_NAME}' introuvable.")
+        else:
+            runs = client.search_runs(
+                experiment_ids=[exp.experiment_id],
+                order_by=["attributes.start_time DESC"],
+                max_results=10,
+            )
+            rows = []
+            for r in runs:
+                m = r.data.metrics
+                rows.append({
+                    "run_name": r.info.run_name,
+                    "prompt_version": r.data.params.get("prompt_version", ""),
+                    "faithfulness": m.get("faithfulness"),
+                    "answer_relevancy": m.get("answer_relevancy"),
+                    "context_precision": m.get("context_precision"),
+                    "latency_mean": m.get("latency_mean"),
+                })
+            mdf = pd.DataFrame(rows)
+            st.dataframe(mdf, use_container_width=True)
+    except Exception as e:
+        st.warning(f"Impossible de lire MLflow : {e}")
+
+    st.subheader("Dernières requêtes")
+    st.dataframe(
+        df[["timestamp", "prompt_version", "question", "latency_s", "num_sources"]]
+        .sort_values("timestamp", ascending=False),
+        use_container_width=True,
+    )
 
 
 PAGES = {
