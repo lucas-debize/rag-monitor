@@ -44,19 +44,23 @@ def chunk_documents(documents):
     return chunks
 
 
-def build_vectorstore(chunks):
-    print(f"Initialisation des embeddings : {EMBEDDING_MODEL}")
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+def get_embeddings():
+    return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
 
-    print(f"Stockage dans ChromaDB : {CHROMA_DIR}")
-    vectorstore = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
+def get_vectorstore():
+    return Chroma(
         collection_name=COLLECTION_NAME,
         persist_directory=CHROMA_DIR,
-        client_settings=Settings(anonymized_telemetry=False),
+        embedding_function=get_embeddings(),
     )
-    print(f"Vectorstore créé avec {vectorstore._collection.count()} vecteurs")
+
+def build_vectorstore(chunks):
+    print(f"Initialisation des embeddings : {EMBEDDING_MODEL}")
+    print(f"Stockage dans ChromaDB : {CHROMA_DIR}")
+    vectorstore = get_vectorstore()
+    if chunks:
+        vectorstore.add_documents(chunks)
+    print(f"Vectorstore : {vectorstore._collection.count()} vecteurs au total")
     return vectorstore
 
 

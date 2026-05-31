@@ -58,6 +58,7 @@ services:
       mlflow:
         condition: service_healthy
     environment:
+      - PYTHONPATH=/app
       - OLLAMA_BASE_URL=http://ollama:11434
       - MODEL_NAME=mistral
       - HF_HOME=/app/.cache/huggingface
@@ -70,6 +71,34 @@ services:
       - ./data:/app/data
       - hf_cache:/app/.cache/huggingface
     command: sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v1 v2 v3"
+
+  streamlit:
+    build: .
+    container_name: rag-monitor-ui
+    depends_on:
+      ollama:
+        condition: service_healthy
+      ollama-init:
+        condition: service_completed_successfully
+      mlflow:
+        condition: service_healthy
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONPATH=/app
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - MODEL_NAME=mistral
+      - HF_HOME=/app/.cache/huggingface
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_EXPERIMENT_NAME=rag-monitor
+      - PROMPT_VERSION=v2
+      - GIT_PYTHON_REFRESH=quiet
+    working_dir: /app
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - hf_cache:/app/.cache/huggingface
+    command: streamlit run /app/src/streamlit_app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
 
 volumes:
   ollama_data:
