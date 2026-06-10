@@ -2,86 +2,121 @@
   {
     "question": "Quels sont les ingrédients principaux de la recette de cookies ?",
     "ground_truth": "Les ingrédients principaux sont le beurre, le sucre, le sucre vanillé, la farine, les œufs et les pépites de chocolat.",
-    "category": "factual_in_doc"
+    "category": "factual_in_doc",
+    "expected_keywords": ["beurre", "sucre", "sucre vanillé", "farine", "œufs", "pépites de chocolat"],
+    "expected_sources": ["Recette-cookie.pdf"],
+    "forbidden_keywords": []
   },
   {
     "question": "Qui est l'auteur du sujet du sprint 6 ?",
     "ground_truth": "L'auteur du sujet du sprint 6 est Théo de Nanassy.",
-    "category": "factual_in_doc"
-  },
-  {
-    "question": "Quelle est la deadline de rendu du sprint 6 ?",
-    "ground_truth": "La deadline finale est le mardi 26 mai à 23h59.",
-    "category": "factual_in_doc"
-  },
-  {
-    "question": "Combien de crédits ECTS rapporte ce sprint ?",
-    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
-    "category": "out_of_scope"
-  },
-  {
-    "question": "Quelle est la capitale de l'Australie ?",
-    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
-    "category": "out_of_scope"
-  },
-  {
-    "question": "À qui faut-il envoyer le rendu ?",
-    "ground_truth": "Le rendu doit être envoyé par email à t.nanassy@pm.me.",
-    "category": "factual_in_doc"
-  },
-  {
-    "question": "Quel est le sujet du sprint 6 ?",
-    "ground_truth": "Le sprint 6 porte sur le debug et l'amélioration d'un projet Unreal Engine cassé fourni par le client.",
-    "category": "factual_in_doc"
-  },
-  {
-    "question": "Sous quel format faut-il livrer le projet ?",
-    "ground_truth": "Il faut livrer un build zippé téléchargeable via un service comme SwissTransfer ou Google Drive, et fournir un dépôt GitHub complet du projet.",
-    "category": "factual_in_doc"
+    "category": "factual_in_doc",
+    "expected_keywords": ["Théo de Nanassy"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   },
   {
     "question": "Qui faut-il ajouter comme collaborateur sur le dépôt GitHub ?",
     "ground_truth": "Il faut ajouter theo.denanassy@epitech.eu comme collaborateur sur le dépôt GitHub.",
-    "category": "factual_in_doc"
+    "category": "factual_in_doc",
+    "expected_keywords": ["theo.denanassy@epitech.eu"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   },
   {
-    "question": "Quels sont les bugs principaux à corriger dans le projet ?",
-    "ground_truth": "Les bugs à corriger sont : le projet ne s'ouvre pas, rien ne spawn quand on appuie sur Play, les cristaux ont des contours blancs étranges, les sons des cristaux ne fonctionnent pas, l'interaction ne fonctionne pas, le puzzle est cassé, et l'optimisation est mauvaise (10-20 FPS dans une scène vide).",
-    "category": "factual_in_doc"
+    "question": "Combien de crédits ECTS rapporte ce sprint ?",
+    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
+    "category": "out_of_scope",
+    "expected_keywords": [],
+    "expected_sources": [],
+    "forbidden_keywords": ["ECTS", "crédits", "5", "6"]
+  },
+  {
+    "question": "Quelle est la capitale de l'Australie ?",
+    "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
+    "category": "out_of_scope",
+    "expected_keywords": [],
+    "expected_sources": [],
+    "forbidden_keywords": ["Canberra", "Sydney", "Melbourne"]
+  },
+  {
+    "question": "À qui faut-il envoyer le rendu ?",
+    "ground_truth": "Le rendu doit être envoyé par email à t.nanassy@pm.me.",
+    "category": "factual_in_doc",
+    "expected_keywords": ["t.nanassy@pm.me"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
+  },
+  {
+    "question": "Quel est le sujet du sprint 6 ?",
+    "ground_truth": "Le sprint 6 porte sur le debug et l'amélioration d'un projet Unreal Engine cassé fourni par le client.",
+    "category": "factual_in_doc",
+    "expected_keywords": ["debug", "amélioration", "Unreal Engine", "cassé"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
+  },
+  {
+    "question": "Sous quel format faut-il livrer le projet ?",
+    "ground_truth": "Il faut livrer un build zippé téléchargeable via un service comme SwissTransfer ou Google Drive, et fournir un dépôt GitHub complet du projet.",
+    "category": "factual_in_doc",
+    "expected_keywords": ["build zippé", "SwissTransfer", "Google Drive", "GitHub"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
+  },
+  {
+    "question": "Qui faut-il ajouter comme collaborateur sur le dépôt GitHub ?",
+    "ground_truth": "Il faut ajouter theo.denanassy@epitech.eu comme collaborateur sur le dépôt GitHub.",
+    "category": "factual_in_doc",
+    "expected_keywords": ["theo.denanassy@epitech.eu"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   },
   {
     "question": "Que faut-il faire après avoir corrigé les bugs ?",
     "ground_truth": "Une fois le jeu fonctionnel, il faut ajouter sa propre touche personnelle : une nouvelle mécanique, une fonctionnalité fun ou quelque chose de cool, avec un feedback visuel ou audio approprié.",
-    "category": "factual_in_doc"
+    "category": "factual_in_doc",
+    "expected_keywords": ["touche personnelle", "nouvelle mécanique", "fonctionnalité fun", "feedback visuel", "audio"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   },
   {
-    "question": "Quelles sont les causes de pénalités ?",
-    "ground_truth": "Les pénalités sont dues aux crashs, soft locks et à une optimisation horrible.",
-    "category": "factual_in_doc"
-  },
-  {
-    "question": "Qui est l'auteur ou le responsable de ce sujet ?",
-    "ground_truth": "Théo de Nanassy est le responsable du sujet.",
-    "category": "factual_in_doc"
+    "question": "Quelle est la date limite de rendu du sprint 6 ?",
+    "ground_truth": "La date limite de rendu finale est le mardi 26 mai à 23h59.",
+    "category": "factual_in_doc",
+    "expected_keywords": ["mardi 26 mai", "23h59"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   },
   {
     "question": "Combien de FPS sont jugés inacceptables dans une scène vide ?",
     "ground_truth": "10 à 20 FPS dans une scène vide est jugé inacceptable.",
-    "category": "factual_in_doc"
+    "category": "factual_in_doc",
+    "expected_keywords": ["10", "20 FPS", "scène vide"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   },
   {
     "question": "Que risque-t-on si on ne sait pas expliquer son propre code ?",
     "ground_truth": "Si on ne peut pas expliquer son propre code, le client peut soupçonner un travail externalisé et donner une mauvaise note (0/5 par dépit).",
-    "category": "factual_in_doc"
+    "category": "factual_in_doc",
+    "expected_keywords": ["expliquer son propre code", "externalisé", "0/5"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   },
   {
     "question": "Quel est le prix du Bitcoin aujourd'hui ?",
     "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
-    "category": "out_of_scope"
+    "category": "out_of_scope",
+    "expected_keywords": [],
+    "expected_sources": [],
+    "forbidden_keywords": ["bitcoin", "BTC", "euro", "dollar", "$", "€"]
   },
   {
     "question": "Que se passe-t-il si on rend le projet en retard ?",
     "ground_truth": "Si la deadline est manquée, le client considère que le projet a été abandonné, ce qui entraîne automatiquement la note de 0, sans excuse ni extension possible.",
-    "category": "factual_in_doc"
+    "category": "factual_in_doc",
+    "expected_keywords": ["deadline", "abandonné", "0", "sans excuse", "extension"],
+    "expected_sources": ["EB_Sprint6_Sujet.pdf"],
+    "forbidden_keywords": []
   }
 ]

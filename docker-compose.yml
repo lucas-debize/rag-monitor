@@ -71,7 +71,7 @@ services:
       - ./src:/app/src
       - ./data:/app/data
       - hf_cache:/app/.cache/huggingface
-    command: sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v1 v2 v3 --max-samples 5"
+    command: sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v1 v2 v3"
 
   streamlit:
     build: .

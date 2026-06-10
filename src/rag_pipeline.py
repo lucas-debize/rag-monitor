@@ -1,4 +1,6 @@
 import os
+import chromadb
+from chromadb.config import Settings
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
@@ -15,11 +17,21 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 MODEL_NAME = os.getenv("MODEL_NAME", "mistral")
 PROMPT_VERSION = os.getenv("PROMPT_VERSION", "v2")
-TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.1"))
-TOP_K = int(os.getenv("RETRIEVER_TOP_K", "3"))
+TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.0"))
+TOP_K = int(os.getenv("RETRIEVER_TOP_K", "5"))
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "50"))
 
+_chroma_client = None
+
+def get_chroma_client():
+    global _chroma_client
+    if _chroma_client is None:
+        _chroma_client = chromadb.PersistentClient(
+            path=CHROMA_PATH,
+            settings=Settings(anonymized_telemetry=False),
+        )
+    return _chroma_client
 
 def format_docs(docs):
     formatted = []
@@ -30,6 +42,22 @@ def format_docs(docs):
         formatted.append(f"{header}\n{d.page_content}")
     return "\n\n---\n\n".join(formatted)
 
+def clean_answer(answer: str):
+    normalized = answer.lower()
+
+    refusal_patterns = [
+        "je ne sais pas",
+        "pas dans les documents",
+        "information n'est pas dans",
+        "ne contient pas",
+        "pas mentionné",
+        "pas présent",
+    ]
+
+    if any(p in normalized for p in refusal_patterns):
+        return "Je ne sais pas, l'information n'est pas dans les documents fournis."
+
+    return answer
 
 def build_chain(prompt_version: str = None):
     prompt_version = prompt_version or PROMPT_VERSION
@@ -39,26 +67,37 @@ def build_chain(prompt_version: str = None):
     embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
 
     print(f"Connexion à ChromaDB : {CHROMA_PATH}")
+    chroma_client = get_chroma_client()
     vectorstore = Chroma(
-        persist_directory=CHROMA_PATH,
+        client=chroma_client,
         embedding_function=embeddings,
         collection_name=COLLECTION_NAME,
     )
     retriever = vectorstore.as_retriever(search_kwargs={"k": TOP_K})
 
     print(f"Connexion à Ollama : {OLLAMA_URL} (modèle : {MODEL_NAME})")
-    llm = OllamaLLM(base_url=OLLAMA_URL, model=MODEL_NAME, temperature=TEMPERATURE)
+    llm = OllamaLLM(
+        base_url=OLLAMA_URL,
+        model=MODEL_NAME,
+        temperature=0,
+        seed=42,
+        num_ctx=4096,
+    )
 
     prompt = PromptTemplate.from_template(prompt_def["template"])
 
-    chain = (
+    base_chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
         | llm
         | StrOutputParser()
     )
-    return chain, retriever, prompt_def
+    if prompt_version == "v3":
+        chain = base_chain | clean_answer
+    else:
+        chain = base_chain
 
+    return chain, retriever, prompt_def
 
 def extract_sources(docs):
     sources = []
@@ -67,7 +106,6 @@ def extract_sources(docs):
         page = d.metadata.get("page", "?")
         sources.append(f"{src}#p{page}")
     return sources
-
 
 def answer_question(chain, retriever, question, index=0):
     print(f"\n{'='*60}\nQuestion : {question}\n{'='*60}")
@@ -84,7 +122,6 @@ def answer_question(chain, retriever, question, index=0):
 
     log_question(index, question, answer, t.elapsed, len(sources), sources)
     return {"answer": answer, "latency": t.elapsed, "sources": sources}
-
 
 def run_pipeline(prompt_version: str, questions: list):
     chain, retriever, prompt_def = build_chain(prompt_version)
@@ -121,7 +158,6 @@ def run_pipeline(prompt_version: str, questions: list):
 
     return {"latencies": latencies, "lengths": lengths, "nums_sources": nums}
 
-
 def main():
     questions = [
         "De quoi parle ce document ?",
@@ -130,7 +166,6 @@ def main():
     ]
     run_pipeline(PROMPT_VERSION, questions)
     print("\n=== PIPELINE RAG EXÉCUTÉE ET TRACKÉE DANS MLFLOW ===")
-
-
+ 
 if __name__ == "__main__":
     main()
