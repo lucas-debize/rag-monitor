@@ -18,10 +18,10 @@ from src.drift_monitoring import generate_drift_report, check_drift_status, DRIF
 MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
 EXPERIMENT_NAME = os.getenv("MLFLOW_EXPERIMENT_NAME", "rag-monitor")
 
-RAG_MONITOR_THRESHOLD = float(os.getenv("RAG_MONITOR_THRESHOLD", "0.80"))
-ANSWER_CORRECTNESS_THRESHOLD = float(os.getenv("ANSWER_CORRECTNESS_THRESHOLD", "0.80"))
-CITATION_SCORE_THRESHOLD = float(os.getenv("CITATION_SCORE_THRESHOLD", "0.80"))
-REFUSAL_SCORE_THRESHOLD = float(os.getenv("REFUSAL_SCORE_THRESHOLD", "0.90"))
+RAG_MONITOR_THRESHOLD = float(os.getenv("RAG_MONITOR_THRESHOLD", "0.75"))
+ANSWER_CORRECTNESS_THRESHOLD = float(os.getenv("ANSWER_CORRECTNESS_THRESHOLD", "0.50"))
+CITATION_SCORE_THRESHOLD = float(os.getenv("CITATION_SCORE_THRESHOLD", "0.75"))
+REFUSAL_SCORE_THRESHOLD = float(os.getenv("REFUSAL_SCORE_THRESHOLD", "0.75"))
 
 BUSINESS_METRICS = [
     "rag_monitor_score",

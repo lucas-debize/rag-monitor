@@ -9,10 +9,12 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch:
 
 jobs:
   pytest:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -32,3 +34,25 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest -v
+
+  rag-evaluation:
+    runs-on: ubuntu-latest
+    needs: pytest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker compose build app
+
+      - name: Run full RAG evaluation
+        run: |
+          docker compose run --rm app sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v3 --check-threshold"
+
+      - name: Show containers logs on failure
+        if: failure()
+        run: |
+          docker compose logs

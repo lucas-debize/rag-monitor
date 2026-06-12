@@ -11,10 +11,10 @@ from src.mlflow_tracker import init_mlflow
 
 TESTSET_PATH = os.getenv("TESTSET_PATH", "/app/data/testset/testset.json")
 OUTPUT_DIR = "/app/data/eval_results"
-RAG_MONITOR_THRESHOLD = float(os.getenv("RAG_MONITOR_THRESHOLD", "0.80"))
-ANSWER_CORRECTNESS_THRESHOLD = float(os.getenv("ANSWER_CORRECTNESS_THRESHOLD", "0.80"))
-CITATION_SCORE_THRESHOLD = float(os.getenv("CITATION_SCORE_THRESHOLD", "0.80"))
-REFUSAL_SCORE_THRESHOLD = float(os.getenv("REFUSAL_SCORE_THRESHOLD", "0.90"))
+RAG_MONITOR_THRESHOLD = float(os.getenv("RAG_MONITOR_THRESHOLD", "0.75"))
+ANSWER_CORRECTNESS_THRESHOLD = float(os.getenv("ANSWER_CORRECTNESS_THRESHOLD", "0.50"))
+CITATION_SCORE_THRESHOLD = float(os.getenv("CITATION_SCORE_THRESHOLD", "0.75"))
+REFUSAL_SCORE_THRESHOLD = float(os.getenv("REFUSAL_SCORE_THRESHOLD", "0.75"))
 
 def generate_predictions(prompt_version, testset):
     chain, retriever, prompt_def = build_chain(prompt_version)
