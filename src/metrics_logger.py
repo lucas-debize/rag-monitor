@@ -1,6 +1,6 @@
 import os
 import csv
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 from typing import List
 
@@ -34,7 +34,7 @@ def log_query(
 ):
     _ensure_file()
     row = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "prompt_version": prompt_version,
         "question": question,
         "answer": answer,

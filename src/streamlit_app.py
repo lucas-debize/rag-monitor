@@ -2,6 +2,7 @@ import os
 import time
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 import plotly.express as px
 import mlflow
 from mlflow.tracking import MlflowClient
@@ -12,6 +13,7 @@ from src.metrics_logger import log_query, load_metrics
 from src.rag_pipeline import build_chain, extract_sources
 from src.prompts import list_versions, get_prompt
 from src.ingestion import chunk_documents, build_vectorstore, DOCUMENTS_DIR
+from src.drift_monitoring import generate_drift_report, check_drift_status, DRIFT_REPORT_PATH
 
 MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
 EXPERIMENT_NAME = os.getenv("MLFLOW_EXPERIMENT_NAME", "rag-monitor")
@@ -75,11 +77,9 @@ def get_chain(prompt_version: str):
     chain, retriever, prompt_def = build_chain(prompt_version)
     return chain, retriever, prompt_def
 
-
 @st.cache_data(ttl=30, show_spinner=False)
 def get_metrics():
     return load_metrics()
-
 
 @st.cache_data(ttl=30, show_spinner=False)
 def fetch_runs():
@@ -116,18 +116,15 @@ def fetch_runs():
 
     return pd.DataFrame(rows)
 
-
 def format_score(value):
     if value is None or pd.isna(value):
         return "n/a"
     return f"{float(value):.3f}"
 
-
 def score_status(value, threshold):
     if value is None or pd.isna(value):
         return "unknown"
     return "ok" if float(value) >= threshold else "ko"
-
 
 def render_score_alert(label, value, threshold):
     status = score_status(value, threshold)
@@ -139,7 +136,6 @@ def render_score_alert(label, value, threshold):
         st.error(f"{label} : {formatted} < {threshold:.2f}")
     else:
         st.warning(f"{label} : non disponible")
-
 
 def render_sources(docs, sources, latency):
     with st.expander(f"📚 Sources utilisées ({len(sources)}) — {latency:.2f}s"):
@@ -154,7 +150,6 @@ def render_sources(docs, sources, latency):
 
             st.markdown(f"**{index}. {source} — {page_label}**")
             st.text(doc.page_content[:700])
-
 
 def ingest_uploaded_files(uploaded_files):
     if os.path.exists(DOCUMENTS_DIR):
@@ -292,7 +287,6 @@ def page_chat():
         }
     )
 
-
 def page_dashboard():
     st.title("📊 Dashboard monitoring")
     st.caption("Suivi des requêtes utilisateur, performances du RAG et résultats d'évaluation MLflow.")
@@ -300,10 +294,22 @@ def page_dashboard():
     metrics_df = get_metrics()
     runs_df = fetch_runs()
 
-    tab_realtime, tab_quality, tab_history = st.tabs(
+    # --- Section Alertes Drift (Haut du dashboard) ---
+    st.subheader("🚨 Statut de la dérive du système (Drift)")
+    drift_status = check_drift_status()
+    if drift_status["drift_detected"]:
+        if drift_status.get("level") == "ERROR":
+            st.error(drift_status["message"])
+        else:
+            st.warning(drift_status["message"])
+    else:
+        st.success(drift_status["message"])
+
+    tab_realtime, tab_quality, tab_drift, tab_history = st.tabs(
         [
             "Temps réel",
             "Qualité RAG",
+            "Analyse Dérive (Evidently AI)",
             "Historique",
         ]
     )
@@ -461,6 +467,34 @@ def page_dashboard():
                     )
                     st.plotly_chart(fig_detail, use_container_width=True)
 
+    with tab_drift:
+        st.subheader("Analyse de dérive sémantique (Text Drift)")
+        st.caption("Compare la distribution et la nature sémantique des questions posées par les utilisateurs par rapport à un jeu de référence.")
+
+        if st.button("🔄 Recalculer le rapport de dérive Evidently AI"):
+            with st.spinner("Analyse statistique et sémantique en cours..."):
+                success = generate_drift_report()
+                if success:
+                    st.success("Rapport Evidently AI généré !")
+                else:
+                    st.error("Impossible d'exécuter l'analyse. Assurez-vous d'avoir saisi au moins 3 requêtes dans le chat.")
+
+        if os.path.exists(DRIFT_REPORT_PATH):
+            with open(DRIFT_REPORT_PATH, "r", encoding="utf-8") as f:
+                html_data = f.read()
+
+            st.download_button(
+                label="📥 Télécharger le rapport HTML complet",
+                data=html_data,
+                file_name="evidently_drift_report.html",
+                mime="text/html"
+            )
+
+            st.markdown("#### Aperçu interactif du rapport Evidently AI")
+            components.html(html_data, height=800, scrolling=True)
+        else:
+            st.info("Aucun rapport disponible actuellement. Cliquez sur le bouton ci-dessus pour le générer.")
+
     with tab_history:
         st.subheader("Dernières requêtes utilisateur")
 
@@ -485,12 +519,10 @@ def page_dashboard():
                 use_container_width=True,
             )
 
-
 PAGES = {
     "💬 Chat": page_chat,
     "📊 Dashboard": page_dashboard,
 }
-
 
 def main():
     reset_vectorstore_on_startup()
@@ -499,7 +531,6 @@ def main():
     st.sidebar.divider()
     st.sidebar.caption(f"MLflow : {MLFLOW_URI}")
     PAGES[choice]()
-
 
 if __name__ == "__main__":
     main()
