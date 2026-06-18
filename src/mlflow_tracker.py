@@ -2,7 +2,7 @@ import os
 import time
 import mlflow
 
-DEFAULT_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
+DEFAULT_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://0.0.0.0:5000/")
 DEFAULT_EXPERIMENT = os.getenv("MLFLOW_EXPERIMENT_NAME", "rag-monitor")
 
 

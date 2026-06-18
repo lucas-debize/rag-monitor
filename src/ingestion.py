@@ -68,15 +68,6 @@ def chunk_documents(documents):
     chunks = splitter.split_documents(documents)
 
     print(f"Total chunks générés : {len(chunks)}")
-    print("\nAffichage des chunks générés :")
-
-    for index, chunk in enumerate(chunks, start=1):
-        print("=" * 80)
-        print(f"Chunk {index}/{len(chunks)}")
-        print(f"Source : {chunk.metadata.get('source', 'unknown')}")
-        print(f"Page : {chunk.metadata.get('page', 'unknown')}")
-        print("-" * 80)
-        print(chunk.page_content)
 
     return chunks
 
@@ -102,7 +93,7 @@ def build_vectorstore(chunks):
 
     return vectorstore
 
-def main():
+def run_ingestion():
     if not os.path.exists(DOCUMENTS_DIR):
         raise FileNotFoundError(f"Le dossier {DOCUMENTS_DIR} n'existe pas")
 
@@ -112,19 +103,10 @@ def main():
         raise ValueError(f"Aucun document trouvé dans {DOCUMENTS_DIR}")
 
     chunks = chunk_documents(documents)
-    vectorstore = build_vectorstore(chunks)
+    build_vectorstore(chunks)
 
-    print("\nTest de recherche de similarité...")
-    results = vectorstore.similarity_search("test", k=5)
-
-    print(f"Résultats trouvés : {len(results)}")
-
-    for i, res in enumerate(results, start=1):
-        print(f"\n--- Chunk {i} ---")
-        print(f"Source : {res.metadata.get('source', 'unknown')}")
-        print(f"Page : {res.metadata.get('page', 'unknown')}")
-        print(res.page_content[:200])
-
+def main():
+    run_ingestion()
     print("\n=== ÉTAPE 2 VALIDÉE ===")
     print("Pipeline d'ingestion fonctionnelle")
 

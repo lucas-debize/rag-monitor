@@ -22,7 +22,7 @@ services:
     environment:
       - OLLAMA_HOST=http://ollama:11434
     entrypoint: >
-      sh -c "ollama pull mistral && ollama pull qwen2.5:1.5b && echo 'Modèles prêts'"
+      sh -c "ollama pull mistral && ollama pull qwen2.5:7b-instruct && echo 'Modèles prêts'"
     restart: "no"
 
   mlflow:
@@ -61,9 +61,9 @@ services:
       - PYTHONPATH=/app
       - OLLAMA_BASE_URL=http://ollama:11434
       - MODEL_NAME=mistral
-      - JUDGE_MODEL=qwen2.5:1.5b
+      - JUDGE_MODEL=qwen2.5:7b-instruct
       - HF_HOME=/app/.cache/huggingface
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_TRACKING_URI=http://mlflow:5000/
       - MLFLOW_EXPERIMENT_NAME=rag-monitor
       - PROMPT_VERSION=v2
       - GIT_PYTHON_REFRESH=quiet
@@ -90,7 +90,7 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
       - MODEL_NAME=mistral
       - HF_HOME=/app/.cache/huggingface
-      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_TRACKING_URI=http://mlflow:5000/
       - MLFLOW_EXPERIMENT_NAME=rag-monitor
       - PROMPT_VERSION=v2
       - GIT_PYTHON_REFRESH=quiet

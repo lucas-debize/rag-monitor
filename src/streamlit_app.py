@@ -15,7 +15,7 @@ from src.prompts import list_versions, get_prompt
 from src.ingestion import chunk_documents, build_vectorstore, DOCUMENTS_DIR
 from src.drift_monitoring import generate_drift_report, check_drift_status, DRIFT_REPORT_PATH
 
-MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
+MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://0.0.0.0:5000/")
 EXPERIMENT_NAME = os.getenv("MLFLOW_EXPERIMENT_NAME", "rag-monitor")
 
 RAG_MONITOR_THRESHOLD = float(os.getenv("RAG_MONITOR_THRESHOLD", "0.75"))

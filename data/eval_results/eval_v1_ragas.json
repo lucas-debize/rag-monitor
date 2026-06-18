@@ -1,0 +1,19 @@
+{
+  "answer_correctness": 0.13194444444444445,
+  "context_recall": 0.0,
+  "citation_score": 0.0,
+  "refusal_score": 0.0,
+  "hallucination_score": 0.0,
+  "rag_monitor_score": 0.13958333333333334,
+  "factual_answer_correctness": 0.13194444444444445,
+  "factual_context_recall": 0.0,
+  "factual_citation_score": 0.0,
+  "factual_hallucination_score": 1.0,
+  "out_of_scope_refusal_score": 0.0,
+  "out_of_scope_citation_score": 1.0,
+  "out_of_scope_hallucination_score": 0.0,
+  "faithfulness": 0.5377777777777778,
+  "answer_relevancy": 0.20899118120870946,
+  "context_precision": 0.0,
+  "eval_mode": "ragas"
+}

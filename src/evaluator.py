@@ -1,10 +1,11 @@
 import os
 import json
 import re
+import math
 import pandas as pd
 from datasets import Dataset
 from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy, context_precision
+from ragas.metrics import faithfulness
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.run_config import RunConfig
@@ -177,14 +178,6 @@ def build_evaluation_dataframe(samples):
         refusal_score = compute_refusal_score(sample)
         hallucination_score = compute_hallucination_score(sample)
 
-        rag_monitor_score = (
-            answer_correctness * 0.30
-            + context_recall * 0.15
-            + citation_score * 0.30
-            + refusal_score * 0.15
-            + hallucination_score * 0.10
-        )
-
         rows.append({
             "question": sample.get("question", ""),
             "category": sample.get("category", "unknown"),
@@ -198,7 +191,6 @@ def build_evaluation_dataframe(samples):
             "citation_score": citation_score,
             "refusal_score": refusal_score,
             "hallucination_score": hallucination_score,
-            "rag_monitor_score": rag_monitor_score,
         })
 
     return pd.DataFrame(rows)
@@ -208,92 +200,107 @@ def safe_mean(df, column):
         return 0.0
     return float(df[column].mean())
 
-def compute_business_scores(df):
+def is_valid_number(value):
+    return value is not None and not (isinstance(value, float) and math.isnan(value))
+
+def compute_partial_business_scores(df):
     factual_df = df[df["category"] == "factual_in_doc"]
     out_df = df[df["category"] == "out_of_scope"]
 
-    factual_answer_correctness = safe_mean(factual_df, "answer_correctness")
-    factual_context_recall = safe_mean(factual_df, "context_recall")
-    factual_citation_score = safe_mean(factual_df, "citation_score")
-    factual_hallucination_score = safe_mean(factual_df, "hallucination_score")
-
-    out_of_scope_refusal_score = safe_mean(out_df, "refusal_score")
-    out_of_scope_citation_score = safe_mean(out_df, "citation_score")
-    out_of_scope_hallucination_score = safe_mean(out_df, "hallucination_score")
-
-    rag_monitor_score = (
-        factual_answer_correctness * 0.30
-        + factual_context_recall * 0.15
-        + factual_citation_score * 0.25
-        + factual_hallucination_score * 0.10
-        + out_of_scope_refusal_score * 0.10
-        + out_of_scope_hallucination_score * 0.10
-    )
-
-    scores = {
-        "answer_correctness": factual_answer_correctness,
-        "context_recall": factual_context_recall,
-        "citation_score": factual_citation_score,
-        "refusal_score": out_of_scope_refusal_score,
-        "hallucination_score": out_of_scope_hallucination_score,
-        "rag_monitor_score": float(rag_monitor_score),
-        "factual_answer_correctness": factual_answer_correctness,
-        "factual_context_recall": factual_context_recall,
-        "factual_citation_score": factual_citation_score,
-        "factual_hallucination_score": factual_hallucination_score,
-        "out_of_scope_refusal_score": out_of_scope_refusal_score,
-        "out_of_scope_citation_score": out_of_scope_citation_score,
-        "out_of_scope_hallucination_score": out_of_scope_hallucination_score,
+    return {
+        "factual_answer_correctness": safe_mean(factual_df, "answer_correctness"),
+        "factual_context_recall": safe_mean(factual_df, "context_recall"),
+        "factual_citation_score": safe_mean(factual_df, "citation_score"),
+        "factual_hallucination_score": safe_mean(factual_df, "hallucination_score"),
+        "out_of_scope_refusal_score": safe_mean(out_df, "refusal_score"),
     }
 
-    return scores
+def compute_rag_monitor_score(scores, ragas_faithfulness=None):
+    if is_valid_number(ragas_faithfulness):
+        primary_score = ragas_faithfulness
+        primary_source = "ragas_faithfulness"
+    else:
+        primary_score = scores["factual_answer_correctness"]
+        primary_source = "factual_answer_correctness"
 
-def build_ragas_dataset(samples):
+    rag_monitor_score = (
+        primary_score * 0.30
+        + scores["factual_context_recall"] * 0.15
+        + scores["factual_citation_score"] * 0.25
+        + scores["factual_hallucination_score"] * 0.15
+        + scores["out_of_scope_refusal_score"] * 0.15
+    )
+
+    return float(rag_monitor_score), primary_source
+
+def build_ragas_dataset(factual_samples):
     return Dataset.from_list([
         {
             "question": s["question"],
-            "answer": s["answer"],
+            "answer": remove_citations_from_answer(s["answer"]),
             "contexts": s["contexts"],
             "ground_truth": s["ground_truth"],
         }
-        for s in samples
+        for s in factual_samples
     ])
 
 def run_optional_ragas(samples, df):
+    df["ragas_faithfulness"] = float("nan")
+
+    factual_indices = [
+        i for i, s in enumerate(samples)
+        if s.get("category", "unknown") == "factual_in_doc"
+    ]
+    factual_samples = [samples[i] for i in factual_indices]
+
+    if not factual_samples:
+        print("Aucun échantillon factual_in_doc : RAGAS ignoré")
+        return {"ragas_faithfulness": float("nan")}, df
+
     judge_llm, judge_emb = build_judge()
     run_config = RunConfig(timeout=1800, max_workers=1, max_retries=3)
 
-    print(f"Évaluation RAGAS secondaire sur {len(samples)} échantillons")
+    print(f"Évaluation RAGAS (faithfulness) sur {len(factual_samples)} échantillons factual_in_doc")
 
     result = evaluate(
-        dataset=build_ragas_dataset(samples),
-        metrics=[faithfulness, answer_relevancy, context_precision],
+        dataset=build_ragas_dataset(factual_samples),
+        metrics=[faithfulness],
         llm=judge_llm,
         embeddings=judge_emb,
         run_config=run_config,
         raise_exceptions=False,
     )
 
-    ragas_df = result.to_pandas()
+    ragas_df = result.to_pandas().reset_index(drop=True)
 
-    df["faithfulness"] = ragas_df["faithfulness"]
-    df["answer_relevancy"] = ragas_df["answer_relevancy"]
-    df["context_precision"] = ragas_df["context_precision"]
+    for position, df_index in enumerate(factual_indices):
+        df.at[df_index, "ragas_faithfulness"] = ragas_df.at[position, "faithfulness"]
+
+    mean_faithfulness = float(df["ragas_faithfulness"].mean(skipna=True))
 
     scores = {
-        "faithfulness": float(df["faithfulness"].mean(skipna=True)),
-        "answer_relevancy": float(df["answer_relevancy"].mean(skipna=True)),
-        "context_precision": float(df["context_precision"].mean(skipna=True)),
+        "ragas_faithfulness": mean_faithfulness,
     }
 
     return scores, df
 
 def run_evaluation(samples, with_ragas=False):
     df = build_evaluation_dataframe(samples)
-    scores = compute_business_scores(df)
+    scores = compute_partial_business_scores(df)
+
+    ragas_faithfulness = None
 
     if with_ragas:
         ragas_scores, df = run_optional_ragas(samples, df)
         scores.update(ragas_scores)
+        ragas_faithfulness = ragas_scores.get("ragas_faithfulness")
+
+    rag_monitor_score, primary_source = compute_rag_monitor_score(scores, ragas_faithfulness)
+    scores["rag_monitor_score"] = rag_monitor_score
+
+    if primary_source == "ragas_faithfulness":
+        print(f"rag_monitor_score basé sur ragas_faithfulness ({scores['ragas_faithfulness']:.4f})")
+    else:
+        print("⚠️ ragas_faithfulness indisponible/NaN : rag_monitor_score basé sur factual_answer_correctness")
 
     return scores, df
