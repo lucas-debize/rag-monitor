@@ -114,7 +114,7 @@ def evaluate_version(prompt_version, testset, with_ragas):
         mlflow.log_params({
             "prompt_version": prompt_version,
             "eval_mode": eval_mode,
-            "judge_model": os.getenv("JUDGE_MODEL", "mistral"),
+            "judge_model": os.getenv("JUDGE_MODEL", "qwen2.5:7b-instruct"),
             "testset_size": len(testset),
             "with_ragas": with_ragas,
         })

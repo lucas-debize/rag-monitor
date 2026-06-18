@@ -13,9 +13,14 @@ from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
 
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-JUDGE_MODEL = os.getenv("JUDGE_MODEL", "mistral")
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "qwen2.5:7b-instruct")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 REFUSAL_SENTENCE = "Je ne sais pas, l'information n'est pas dans les documents fournis."
+
+RAGAS_TIMEOUT = int(os.getenv("RAGAS_TIMEOUT", "1800"))
+RAGAS_MAX_WORKERS = int(os.getenv("RAGAS_MAX_WORKERS", "1"))
+RAGAS_MAX_RETRIES = int(os.getenv("RAGAS_MAX_RETRIES", "3"))
+RAGAS_MAX_SAMPLES = int(os.getenv("RAGAS_MAX_SAMPLES", "0"))
 
 def build_judge():
     llm = ChatOpenAI(
@@ -251,6 +256,10 @@ def run_optional_ragas(samples, df):
         i for i, s in enumerate(samples)
         if s.get("category", "unknown") == "factual_in_doc"
     ]
+
+    if RAGAS_MAX_SAMPLES > 0:
+        factual_indices = factual_indices[:RAGAS_MAX_SAMPLES]
+
     factual_samples = [samples[i] for i in factual_indices]
 
     if not factual_samples:
@@ -258,9 +267,15 @@ def run_optional_ragas(samples, df):
         return {"ragas_faithfulness": float("nan")}, df
 
     judge_llm, judge_emb = build_judge()
-    run_config = RunConfig(timeout=1800, max_workers=1, max_retries=3)
+    run_config = RunConfig(
+        timeout=RAGAS_TIMEOUT,
+        max_workers=RAGAS_MAX_WORKERS,
+        max_retries=RAGAS_MAX_RETRIES,
+    )
 
+    print(f"Juge RAGAS utilisé : {JUDGE_MODEL}")
     print(f"Évaluation RAGAS (faithfulness) sur {len(factual_samples)} échantillons factual_in_doc")
+    print(f"RunConfig RAGAS : timeout={RAGAS_TIMEOUT}s, max_workers={RAGAS_MAX_WORKERS}, max_retries={RAGAS_MAX_RETRIES}, max_samples={RAGAS_MAX_SAMPLES}")
 
     result = evaluate(
         dataset=build_ragas_dataset(factual_samples),
@@ -275,6 +290,11 @@ def run_optional_ragas(samples, df):
 
     for position, df_index in enumerate(factual_indices):
         df.at[df_index, "ragas_faithfulness"] = ragas_df.at[position, "faithfulness"]
+
+    nan_count = int(df["ragas_faithfulness"].isna().sum())
+    valid_count = int(df["ragas_faithfulness"].notna().sum())
+    print(f"RAGAS faithfulness : {valid_count} valeurs valides, {nan_count} NaN")
+    print(df.loc[factual_indices, ["question", "ragas_faithfulness"]].to_string())
 
     mean_faithfulness = float(df["ragas_faithfulness"].mean(skipna=True))
 

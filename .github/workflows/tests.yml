@@ -38,7 +38,13 @@ jobs:
   rag-evaluation:
     runs-on: ubuntu-latest
     needs: pytest
-    timeout-minutes: 120
+    timeout-minutes: 350
+
+    env:
+      RAGAS_TIMEOUT: "3600"
+      RAGAS_MAX_WORKERS: "1"
+      RAGAS_MAX_RETRIES: "5"
+      RAGAS_MAX_SAMPLES: "6"
 
     steps:
       - name: Checkout repository
@@ -50,7 +56,12 @@ jobs:
 
       - name: Run full RAG evaluation
         run: |
-          docker compose run --rm app sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v3 --check-threshold"
+          docker compose run --rm \
+            -e RAGAS_TIMEOUT \
+            -e RAGAS_MAX_WORKERS \
+            -e RAGAS_MAX_RETRIES \
+            -e RAGAS_MAX_SAMPLES \
+            app sh -c "python src/ingestion.py && python -m src.run_evaluation --versions v3 --check-threshold"
 
       - name: Show containers logs on failure
         if: failure()

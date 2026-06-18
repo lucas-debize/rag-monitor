@@ -67,6 +67,10 @@ services:
       - MLFLOW_EXPERIMENT_NAME=rag-monitor
       - PROMPT_VERSION=v2
       - GIT_PYTHON_REFRESH=quiet
+      - RAGAS_TIMEOUT=${RAGAS_TIMEOUT:-1800}
+      - RAGAS_MAX_WORKERS=${RAGAS_MAX_WORKERS:-1}
+      - RAGAS_MAX_RETRIES=${RAGAS_MAX_RETRIES:-3}
+      - RAGAS_MAX_SAMPLES=${RAGAS_MAX_SAMPLES:-0}
     volumes:
       - ./src:/app/src
       - ./data:/app/data
