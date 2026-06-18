@@ -56,7 +56,7 @@ def test_generation(base_url, model_name):
 
 def main():
     base_url = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-    model_name = os.getenv("MODEL_NAME", "mistral")
+    model_name = os.getenv("MODEL_NAME", "mistral:7b-instruct-v0.3-q4_0")
 
     wait_for_ollama(base_url)
     pull_model(base_url, model_name)
