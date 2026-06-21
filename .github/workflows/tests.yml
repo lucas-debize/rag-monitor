@@ -44,7 +44,7 @@ jobs:
       RAGAS_TIMEOUT: "3600"
       RAGAS_MAX_WORKERS: "1"
       RAGAS_MAX_RETRIES: "5"
-      RAGAS_MAX_SAMPLES: "6"
+      RAGAS_MAX_SAMPLES: "15"
 
     steps:
       - name: Checkout repository
