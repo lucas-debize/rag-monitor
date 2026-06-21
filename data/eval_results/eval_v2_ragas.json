@@ -1,10 +1,10 @@
 {
-  "factual_answer_correctness": 0.3541666666666667,
+  "factual_answer_correctness": 0.3611111111111111,
   "factual_context_recall": 1.0,
   "factual_citation_score": 0.0,
   "factual_hallucination_score": 0.9166666666666666,
   "out_of_scope_refusal_score": 1.0,
-  "ragas_faithfulness": 0.8333333333333334,
-  "rag_monitor_score": 0.6875,
+  "ragas_faithfulness": 0.5694444444444444,
+  "rag_monitor_score": 0.6083333333333333,
   "eval_mode": "ragas"
 }

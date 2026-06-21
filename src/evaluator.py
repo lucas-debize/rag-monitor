@@ -13,7 +13,7 @@ from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
 
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-JUDGE_MODEL = os.getenv("JUDGE_MODEL", "mistral:7b-instruct-v0.3-q4_0")
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "qwen2.5:7b-instruct")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 REFUSAL_SENTENCE = "Je ne sais pas, l'information n'est pas dans les documents fournis."
 
@@ -238,12 +238,18 @@ def compute_rag_monitor_score(scores, ragas_faithfulness=None):
 
     return float(rag_monitor_score), primary_source
 
+def strip_source_headers(context):
+    context = re.sub(r"\[Source:\s*[^\]]+\]", "", context)
+    context = re.sub(r"\[Sources:\s*[^\]]+\]", "", context)
+    context = re.sub(r"\n{3,}", "\n\n", context)
+    return context.strip()
+
 def build_ragas_dataset(factual_samples):
     return Dataset.from_list([
         {
             "question": s["question"],
             "answer": remove_citations_from_answer(s["answer"]),
-            "contexts": s["contexts"],
+            "contexts": [strip_source_headers(c) for c in s["contexts"]],
             "ground_truth": s["ground_truth"],
         }
         for s in factual_samples
