@@ -53,5 +53,6 @@ def load_metrics():
         return pd.DataFrame(columns=FIELDS)
     df = pd.read_csv(METRICS_FILE)
     if not df.empty:
-        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+        ts = pd.to_datetime(df["timestamp"], errors="coerce", utc=True, format="ISO8601")
+        df["timestamp"] = ts.dt.tz_convert(None)
     return df

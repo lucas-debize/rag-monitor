@@ -1,0 +1,29 @@
+{
+  "v1": {
+    "factual_answer_correctness": 0.3333333333333333,
+    "factual_context_recall": 1.0,
+    "factual_citation_score": 0.0,
+    "factual_hallucination_score": 1.0,
+    "out_of_scope_refusal_score": 0.0,
+    "rag_monitor_score": 0.4,
+    "eval_mode": "base"
+  },
+  "v2": {
+    "factual_answer_correctness": 0.3541666666666667,
+    "factual_context_recall": 1.0,
+    "factual_citation_score": 0.0,
+    "factual_hallucination_score": 0.9166666666666666,
+    "out_of_scope_refusal_score": 1.0,
+    "rag_monitor_score": 0.54375,
+    "eval_mode": "base"
+  },
+  "v3": {
+    "factual_answer_correctness": 0.3680555555555556,
+    "factual_context_recall": 1.0,
+    "factual_citation_score": 0.9166666666666666,
+    "factual_hallucination_score": 0.9166666666666666,
+    "out_of_scope_refusal_score": 0.6666666666666666,
+    "rag_monitor_score": 0.7270833333333333,
+    "eval_mode": "base"
+  }
+}

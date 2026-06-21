@@ -1,0 +1,9 @@
+{
+  "factual_answer_correctness": 0.3333333333333333,
+  "factual_context_recall": 1.0,
+  "factual_citation_score": 0.0,
+  "factual_hallucination_score": 1.0,
+  "out_of_scope_refusal_score": 0.0,
+  "rag_monitor_score": 0.4,
+  "eval_mode": "base"
+}

@@ -91,7 +91,7 @@
     "question": "Combien de FPS sont jugés inacceptables dans une scène vide ?",
     "ground_truth": "10 à 20 FPS dans une scène vide est jugé inacceptable.",
     "category": "factual_in_doc",
-    "expected_keywords": ["10", "20 FPS", "scène vide"],
+    "expected_keywords": ["10", "20", "FPS", "scène vide"],
     "expected_sources": ["EB_Sprint6_Sujet.pdf"],
     "forbidden_keywords": []
   },

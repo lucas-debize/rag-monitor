@@ -13,7 +13,7 @@ from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
 
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-JUDGE_MODEL = os.getenv("JUDGE_MODEL", "qwen2.5:7b-instruct")
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "mistral:7b-instruct-v0.3-q4_0")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 REFUSAL_SENTENCE = "Je ne sais pas, l'information n'est pas dans les documents fournis."
 

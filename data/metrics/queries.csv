@@ -46,3 +46,15 @@ Sources: Recette-cookie.pdf, page 3 (x3)",141.25,61,3,Recette-cookie.pdf#p3|Rece
 2026-06-11T22:22:06.599713,v3,combien a t il de frere et soeur ?,"Je ne sais pas, l'information n'est pas dans les documents fournis.",265.3283,67,5,CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0
 2026-06-11T22:46:09.985310,v3,a qui appartient ce cv ?,Je ne sais pas répondre à cette question car aucun document pertinent n'a été trouvé.,0.1342,85,0,
 2026-06-11T22:50:59.857064,v3,a qui appartient ce cv ?," Le CV appartient à Lucas Debize. [Source: CV.pdf, page 0]",279.0408,58,5,CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0
+2026-06-19T12:57:32.355853+00:00,v3,a qui appartient ce cv ?,Je ne sais pas répondre à cette question car aucun document pertinent n'a été trouvé.,0.0491,85,0,
+2026-06-19T12:57:40.845415+00:00,v3,a qui appartient ce cv ?,Je ne sais pas répondre à cette question car aucun document pertinent n'a été trouvé.,0.0384,85,0,
+2026-06-19T13:01:18.759664+00:00,v3,a qui appartient ce cv ?, L'auteur de ce CV est Lucas de Bize. [Source: CV.pdf],210.4359,54,5,CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0
+2026-06-19T13:13:42.554260+00:00,v2,salut,Je ne sais pas répondre à cette question car aucun document pertinent n'a été trouvé.,0.0415,85,0,
+2026-06-19T13:28:28.967687+00:00,v3,test,Je ne sais pas répondre à cette question car aucun document pertinent n'a été trouvé.,0.0645,85,0,
+2026-06-19T13:34:07.230005+00:00,v3,test2,Je ne sais pas répondre à cette question car aucun document pertinent n'a été trouvé.,0.0861,85,0,
+2026-06-19T14:00:08.787878+00:00,v3,testing,Je ne sais pas répondre à cette question car aucun document pertinent n'a été trouvé.,0.0816,85,0,
+2026-06-19T14:16:01.484631+00:00,v3,a qui appartiens ce cv ?," [Source: CV.pdf]
+L'auteur de ce CV est Lucas de Bize.",210.8159,54,5,CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0
+2026-06-19T14:20:16.356210+00:00,v3,quelle sont les domaines de compétences ?," Les domaines de compétences sont : C++, C++, Python, JavaScript, HTML/CSS, Java Script, Dart, React.js, Git, Gitlab, Docker, Linux, BASH, UE5 [Source: CV.pdf, page 0]",170.5985,167,5,CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0|CV.pdf#p0
+2026-06-19T14:24:48.874939+00:00,v3,quelle sont les ingrédient de base des cookies ?," Les ingrédients de base des cookies sont le beurre, le sucre, le sucre vanillé, les œufs, la farine et la levure. [Source: Recette-cookie.pdf, page 1 et 2]",141.9107,156,5,Recette-cookie.pdf#p0|Recette-cookie.pdf#p3|Recette-cookie.pdf#p1|Recette-cookie.pdf#p2|CV.pdf#p0
+2026-06-19T14:27:05.988352+00:00,v3,combien de gramme de farine dois je mettre ?," 200 grammes [Source: Recette-cookie.pdf, page 0]",88.3742,49,5,Recette-cookie.pdf#p2|Recette-cookie.pdf#p1|Recette-cookie.pdf#p3|Recette-cookie.pdf#p0|CV.pdf#p0

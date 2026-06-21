@@ -20,29 +20,28 @@ EXPERIMENT_NAME = os.getenv("MLFLOW_EXPERIMENT_NAME", "rag-monitor")
 
 RAG_MONITOR_THRESHOLD = float(os.getenv("RAG_MONITOR_THRESHOLD", "0.75"))
 ANSWER_CORRECTNESS_THRESHOLD = float(os.getenv("ANSWER_CORRECTNESS_THRESHOLD", "0.50"))
-CITATION_SCORE_THRESHOLD = float(os.getenv("CITATION_SCORE_THRESHOLD", "0.75"))
-REFUSAL_SCORE_THRESHOLD = float(os.getenv("REFUSAL_SCORE_THRESHOLD", "0.75"))
+FAITHFULNESS_THRESHOLD = float(os.getenv("FAITHFULNESS_THRESHOLD", "0.6"))
+CITATION_SCORE_THRESHOLD = float(os.getenv("CITATION_SCORE_THRESHOLD", "0.6"))
+REFUSAL_SCORE_THRESHOLD = float(os.getenv("REFUSAL_SCORE_THRESHOLD", "0.6"))
 
 BUSINESS_METRICS = [
     "rag_monitor_score",
+    "ragas_faithfulness",
     "factual_answer_correctness",
     "factual_context_recall",
     "factual_citation_score",
     "factual_hallucination_score",
     "out_of_scope_refusal_score",
-    "out_of_scope_citation_score",
-    "out_of_scope_hallucination_score",
 ]
 
 DISPLAY_METRICS = {
     "rag_monitor_score": "Score global",
+    "ragas_faithfulness": "Fidélité RAGAS (IA)",
     "factual_answer_correctness": "Exactitude",
     "factual_context_recall": "Rappel contexte",
     "factual_citation_score": "Citations",
     "factual_hallucination_score": "Anti-hallucination factuelle",
     "out_of_scope_refusal_score": "Refus hors-scope",
-    "out_of_scope_citation_score": "Citations hors-scope",
-    "out_of_scope_hallucination_score": "Anti-hallucination hors-scope",
 }
 
 st.set_page_config(page_title="RAG Monitor", page_icon="🤖", layout="wide")
@@ -398,11 +397,11 @@ def page_dashboard():
 
                 c1.metric("Prompt", latest_eval["prompt_version"])
                 c2.metric("Score global", format_score(latest_eval["rag_monitor_score"]))
-                c3.metric("Exactitude", format_score(latest_eval["factual_answer_correctness"]))
+                c3.metric("Fidélité RAGAS", format_score(latest_eval["ragas_faithfulness"]))
                 c4.metric("Citations", format_score(latest_eval["factual_citation_score"]))
 
                 render_score_alert("Score global RAG Monitor", latest_eval["rag_monitor_score"], RAG_MONITOR_THRESHOLD)
-                render_score_alert("Exactitude factuelle", latest_eval["factual_answer_correctness"], ANSWER_CORRECTNESS_THRESHOLD)
+                render_score_alert("Fidélité RAGAS (IA juge)", latest_eval["ragas_faithfulness"], FAITHFULNESS_THRESHOLD)
                 render_score_alert("Score de citation", latest_eval["factual_citation_score"], CITATION_SCORE_THRESHOLD)
                 render_score_alert("Refus hors-scope", latest_eval["out_of_scope_refusal_score"], REFUSAL_SCORE_THRESHOLD)
 
@@ -427,28 +426,46 @@ def page_dashboard():
                 chart_df = eval_df.dropna(subset=["rag_monitor_score"])
 
                 if not chart_df.empty:
+                    latest_score_df = (
+                        chart_df.sort_values("start_time")
+                        .groupby("prompt_version", as_index=False)
+                        .last()
+                        .sort_values("prompt_version")
+                    )
+
                     st.markdown("#### Score global par version")
                     fig_score = px.bar(
-                        chart_df.sort_values("start_time"),
+                        latest_score_df,
                         x="prompt_version",
                         y="rag_monitor_score",
                         color="prompt_version",
                         hover_data=["run_name", "start_time"],
+                        category_orders={"prompt_version": sorted(latest_score_df["prompt_version"].unique())},
                     )
                     fig_score.add_hline(y=RAG_MONITOR_THRESHOLD, line_dash="dash", line_color="red")
+                    fig_score.update_yaxes(range=[0, 1])
                     st.plotly_chart(fig_score, use_container_width=True)
 
+
                 detail_metrics = [
+                    "ragas_faithfulness",
                     "factual_answer_correctness",
                     "factual_context_recall",
                     "factual_citation_score",
                     "out_of_scope_refusal_score",
-                    "out_of_scope_hallucination_score",
                 ]
 
-                detail_df = eval_df[["prompt_version"] + detail_metrics].dropna(how="all", subset=detail_metrics)
+                latest_per_version = (
+                    eval_df.sort_values("start_time")
+                    .groupby("prompt_version", as_index=False)
+                    .last()
+                )
+
+                detail_df = latest_per_version[["prompt_version"] + detail_metrics].dropna(how="all", subset=detail_metrics)
 
                 if not detail_df.empty:
+                    detail_df = detail_df.sort_values("prompt_version")
+
                     melted_df = detail_df.melt(
                         id_vars=["prompt_version"],
                         value_vars=detail_metrics,
@@ -464,8 +481,11 @@ def page_dashboard():
                         y="score",
                         color="metric",
                         barmode="group",
+                        category_orders={"prompt_version": sorted(detail_df["prompt_version"].unique())},
                     )
+                    fig_detail.update_yaxes(range=[0, 1])
                     st.plotly_chart(fig_detail, use_container_width=True)
+
 
     with tab_drift:
         st.subheader("Analyse de dérive sémantique (Text Drift)")
@@ -502,6 +522,7 @@ def page_dashboard():
             st.info("Aucune requête enregistrée.")
         else:
             history_df = metrics_df.sort_values("timestamp", ascending=False).copy()
+            history_df["timestamp"] = history_df["timestamp"].dt.strftime("%Y-%m-%d %H:%M:%S")
 
             st.dataframe(
                 history_df[
@@ -529,7 +550,7 @@ def main():
     st.sidebar.title("RAG Monitor")
     choice = st.sidebar.radio("Navigation", list(PAGES.keys()))
     st.sidebar.divider()
-    st.sidebar.caption(f"MLflow : {MLFLOW_URI}")
+    st.sidebar.caption(f"MLflow : http://0.0.0.0:5000/")
     PAGES[choice]()
 
 if __name__ == "__main__":

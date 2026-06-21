@@ -1,12 +1,32 @@
 {
+  "v1": {
+    "factual_answer_correctness": 0.3333333333333333,
+    "factual_context_recall": 1.0,
+    "factual_citation_score": 0.0,
+    "factual_hallucination_score": 1.0,
+    "out_of_scope_refusal_score": 0.0,
+    "ragas_faithfulness": 0.9166666666666666,
+    "rag_monitor_score": 0.575,
+    "eval_mode": "ragas"
+  },
+  "v2": {
+    "factual_answer_correctness": 0.3541666666666667,
+    "factual_context_recall": 1.0,
+    "factual_citation_score": 0.0,
+    "factual_hallucination_score": 0.9166666666666666,
+    "out_of_scope_refusal_score": 1.0,
+    "ragas_faithfulness": 0.8333333333333334,
+    "rag_monitor_score": 0.6875,
+    "eval_mode": "ragas"
+  },
   "v3": {
     "factual_answer_correctness": 0.3680555555555556,
     "factual_context_recall": 1.0,
     "factual_citation_score": 0.9166666666666666,
     "factual_hallucination_score": 0.9166666666666666,
     "out_of_scope_refusal_score": 0.6666666666666666,
-    "ragas_faithfulness": 0.6666666666666666,
-    "rag_monitor_score": 0.8166666666666665,
+    "ragas_faithfulness": 0.625,
+    "rag_monitor_score": 0.8041666666666666,
     "eval_mode": "ragas"
   }
 }
