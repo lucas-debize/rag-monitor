@@ -24,12 +24,12 @@
     "forbidden_keywords": []
   },
   {
-    "question": "Combien de crédits ECTS rapporte ce sprint ?",
+    "question": "Combien y a t il d'humains sur terre ?",
     "ground_truth": "Je ne sais pas, l'information n'est pas dans les documents fournis.",
     "category": "out_of_scope",
     "expected_keywords": [],
     "expected_sources": [],
-    "forbidden_keywords": ["ECTS", "crédits", "5", "6"]
+    "forbidden_keywords": ["humains", "population", "terre", "milliards"]
   },
   {
     "question": "Quelle est la capitale de l'Australie ?",

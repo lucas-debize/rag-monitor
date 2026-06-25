@@ -3,8 +3,8 @@
   "factual_context_recall": 1.0,
   "factual_citation_score": 0.9166666666666666,
   "factual_hallucination_score": 0.9166666666666666,
-  "out_of_scope_refusal_score": 0.6666666666666666,
+  "out_of_scope_refusal_score": 1.0,
   "ragas_faithfulness": 0.6666666666666666,
-  "rag_monitor_score": 0.8166666666666665,
+  "rag_monitor_score": 0.8666666666666666,
   "eval_mode": "ragas"
 }

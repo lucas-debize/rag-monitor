@@ -293,16 +293,31 @@ def page_dashboard():
     metrics_df = get_metrics()
     runs_df = fetch_runs()
 
-    # --- Section Alertes Drift (Haut du dashboard) ---
-    st.subheader("🚨 Statut de la dérive du système (Drift)")
-    drift_status = check_drift_status()
-    if drift_status["drift_detected"]:
-        if drift_status.get("level") == "ERROR":
-            st.error(drift_status["message"])
-        else:
-            st.warning(drift_status["message"])
+    selected_version = "Toutes"
+    last_n = 50
+
+    if not metrics_df.empty:
+        with st.sidebar:
+            st.header("Filtres dashboard")
+
+            versions = ["Toutes"] + sorted(metrics_df["prompt_version"].dropna().unique().tolist())
+            selected_version = st.selectbox("Version du prompt", versions, index=0)
+
+            last_n = st.slider("Nombre de requêtes affichées", 5, 500, 50, step=5)
+
+    st.subheader("🚨 Statut de la dérive du système")
+    drift_status = check_drift_status(prompt_version=selected_version, window_size=last_n)
+
+
+    if drift_status.get("level") == "ERROR":
+        st.error(drift_status["message"])
+    elif drift_status.get("level") == "WARNING":
+        st.warning(drift_status["message"])
+    elif drift_status.get("level") == "INFO":
+        st.info(drift_status["message"])
     else:
         st.success(drift_status["message"])
+
 
     tab_realtime, tab_quality, tab_drift, tab_history = st.tabs(
         [
@@ -319,13 +334,6 @@ def page_dashboard():
         if metrics_df.empty:
             st.info("Aucune requête enregistrée. Pose une question dans l'onglet Chat pour alimenter le dashboard.")
         else:
-            with st.sidebar:
-                st.header("Filtres dashboard")
-
-                versions = ["Toutes"] + sorted(metrics_df["prompt_version"].dropna().unique().tolist())
-                selected_version = st.selectbox("Version du prompt", versions, index=0)
-
-                last_n = st.slider("Nombre de requêtes affichées", 5, 500, 50, step=5)
 
             filtered_df = metrics_df.copy()
 
@@ -488,16 +496,17 @@ def page_dashboard():
 
 
     with tab_drift:
-        st.subheader("Analyse de dérive sémantique (Text Drift)")
-        st.caption("Compare la distribution et la nature sémantique des questions posées par les utilisateurs par rapport à un jeu de référence.")
+        st.subheader("Analyse de dérive des questions utilisateur")
+        st.caption(f"Le rapport compare les {last_n} dernières questions filtrées avec un jeu de référence représentatif du projet RAG Monitor.")
 
-        if st.button("🔄 Recalculer le rapport de dérive Evidently AI"):
-            with st.spinner("Analyse statistique et sémantique en cours..."):
-                success = generate_drift_report()
+        if st.button("🔄 Générer le rapport Evidently AI"):
+            with st.spinner("Analyse des questions utilisateur en cours..."):
+                success = generate_drift_report(prompt_version=selected_version, window_size=last_n)
                 if success:
-                    st.success("Rapport Evidently AI généré !")
+                    st.success("Rapport Evidently AI généré.")
                 else:
-                    st.error("Impossible d'exécuter l'analyse. Assurez-vous d'avoir saisi au moins 3 requêtes dans le chat.")
+                    st.error("Impossible de générer le rapport. Minimum requis : 3 requêtes enregistrées dans le chat.")
+
 
         if os.path.exists(DRIFT_REPORT_PATH):
             with open(DRIFT_REPORT_PATH, "r", encoding="utf-8") as f:

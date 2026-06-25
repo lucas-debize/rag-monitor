@@ -1,0 +1,15 @@
+artifact_uri: file:///mlflow/mlartifacts/628234446217724663/705fb98412fb4ec3ae59298a3b24ae34/artifacts
+end_time: 1782144488425
+entry_point_name: ''
+experiment_id: '628234446217724663'
+lifecycle_stage: active
+run_id: 705fb98412fb4ec3ae59298a3b24ae34
+run_name: eval-v1-ragas
+run_uuid: 705fb98412fb4ec3ae59298a3b24ae34
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1782144488395
+status: 3
+tags: []
+user_id: root

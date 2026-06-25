@@ -3,12 +3,8 @@ PROMPTS = {
         "version": "v1",
         "description": "Baseline naïve : assistant généraliste, contexte optionnel, hallucinations possibles.",
         "template": (
-            "Tu es un assistant généraliste francophone.\n"
-            "Réponds toujours en français.\n"
-            "Réponds naturellement à la question de l'utilisateur.\n"
-            "Tu peux utiliser le contexte ci-dessous s'il t'aide, mais tu peux aussi utiliser tes connaissances générales.\n"
-            "Si le contexte est incomplet, donne quand même la réponse qui te semble la plus probable.\n"
-            "Ne cite pas de source.\n\n"
+            "Tu es un assistant généraliste.\n"
+            "Réponds à la question de l'utilisateur.\n\n"
             "Contexte optionnel :\n{context}\n\n"
             "Question : {question}\n"
             "Réponse en français :"
@@ -22,8 +18,7 @@ PROMPTS = {
             "Réponds toujours en français.\n"
             "Réponds uniquement à partir des informations explicitement présentes dans le contexte.\n"
             "N'utilise aucune connaissance générale.\n"
-            "N'invente aucune information.\n"
-            "Ne cite jamais de source dans ta réponse.\n\n"
+            "N'invente aucune information.\n\n"
             "Si la réponse est présente dans le contexte, réponds avec une phrase complète, claire et en français.\n"
             "Si le contexte est en anglais, traduis et reformule la réponse en français.\n"
             "Si une date ou une heure est en anglais dans le contexte, reformule-la en français.\n"
