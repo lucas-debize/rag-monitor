@@ -25,10 +25,9 @@ Un système complet de question-réponse basé sur la Génération Augmentée pa
 
 ## Démo vidéo
 
-<video controls width="100%">
-  <source src="asset/demo.mp4" type="video/mp4">
-  Votre navigateur ne supporte pas la lecture vidéo.
-</video>
+[![Voir la démo vidéo](asset/demo_intro.png)](asset/demo.mp4)
+
+> 🎬 Cliquez sur l'image ci-dessus pour télécharger/visionner la démo (`asset/demo.mp4`).
 
 ### Cas d'usage
 
